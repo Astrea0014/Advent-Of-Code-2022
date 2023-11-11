@@ -1,12 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#undef UNICODE
 #include <Windows.h>
+
+BOOL WINAPI IsCRLF(LPSTR lpString) {
+  if (lpString[0] == '\r' && lpString[1] == '\n') return TRUE;
+  else return FALSE;
+}
 
 int main() {
   HANDLE hFile = CreateFile(
-    "input.txt",
+    TEXT("input.txt"),
     FILE_GENERIC_READ,
     0,
     NULL,
@@ -36,8 +40,8 @@ int main() {
   INT nCurrent = 0;
 
   for (int i = 0; i < dwFileSize; i++) {
-    if (lpFileContents[i] == '\n') {
-      if (i + 1 != dwFileSize && lpFileContents[i + 1] == '\n') {
+    if (IsCRLF(&lpFileContents[i])) {
+      if (i + 4 < dwFileSize && IsCRLF(&lpFileContents[i + 2])) {
         if (nTotal > nMaxTotal)
           nMaxTotal = nTotal;
         nTotal = 0;

@@ -1,20 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#undef UNICODE
 #include <Windows.h>
 
-int qsort_s_callback(const void* pElem1, const void* pElem2, void* pContext) {
-  if (*(const int*)pElem1 < *(const int*)pElem2)
-    return -1;
-  else if (*(const int*)pElem1 > *(const int*)pElem2)
-    return 1;
-  else return 0;
+BOOL WINAPI IsCRLF(LPSTR lpString) {
+  if (lpString[0] == '\r' && lpString[1] == '\n') return TRUE;
+  else return FALSE;
+}
+
+int qsort_callback(const void* pElem1, const void* pElem2) {
+  const int x = *(const int*)pElem1;
+  const int y = *(const int*)pElem2;
+
+  return (x > y) - (x < y);
 }
 
 int main() {
   HANDLE hFile = CreateFile(
-    "input.txt",
+    TEXT("input.txt"),
     FILE_GENERIC_READ,
     0,
     NULL,
@@ -44,12 +47,11 @@ int main() {
   INT nCurrent = 0;
 
   for (int i = 0; i < dwFileSize; i++) {
-    if (lpFileContents[i] == '\n') {
-      if (i + 1 != dwFileSize && lpFileContents[i + 1] == '\n') {
-
+    if (IsCRLF(&lpFileContents[i])) {
+      if (i + 4 < dwFileSize && IsCRLF(&lpFileContents[i + 2])) {
         if (nTotal > sznMaxTotal[0]) {
           sznMaxTotal[0] = nTotal;
-          qsort_s(sznMaxTotal, 3, sizeof(int), qsort_s_callback, NULL);
+          qsort(sznMaxTotal, sizeof(sznMaxTotal) / sizeof(sznMaxTotal[0]), sizeof(sznMaxTotal[0]), qsort_callback);
         }
 
         nTotal = 0;
