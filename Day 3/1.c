@@ -3,16 +3,23 @@
 
 #include <Windows.h>
 
-VOID WINAPI Blacklist(LPSTR lpBlacklist, LPINT lpBlacklistCount, CHAR cCharacter) {
-    lpBlacklist[*lpBlacklistCount] = cCharacter;
-    (*lpBlacklistCount)++;
+CHAR szBlacklist[64];
+INT nBlacklistCount = 0;
+
+VOID WINAPI Blacklist(CHAR cCharacter) {
+    szBlacklist[nBlacklistCount] = cCharacter;
+    nBlacklistCount++;
 }
 
-BOOL WINAPI IsBlacklisted(LPSTR lpBlacklist, LPINT lpBlacklistCount, CHAR cCharacter) {
-    for (INT i = 0; i < *lpBlacklistCount; i++)
-        if (lpBlacklist[i] == cCharacter)
+BOOL WINAPI IsBlacklisted(CHAR cCharacter) {
+    for (INT i = 0; i < nBlacklistCount; i++)
+        if (szBlacklist[i] == cCharacter)
             return TRUE;
     return FALSE;
+}
+
+VOID WINAPI ResetBlacklist() {
+    nBlacklistCount = 0;
 }
 
 INT WINAPI GetPriority(CHAR cCharacter) {
@@ -37,15 +44,14 @@ int main() {
         INT nCompartmentSize = nBackpackSize / 2;
         LPSTR lpCompartment1 = &szBackpack[0], lpCompartment2 = &szBackpack[nCompartmentSize];
 
-        CHAR szBlacklist[64];
-        INT nBlacklistCount = 0;
-
         for (INT i = 0; i < nCompartmentSize; i++)
             for (INT j = 0; j < nCompartmentSize; j++)
-                if (lpCompartment1[i] == lpCompartment2[j] && !IsBlacklisted(szBlacklist, &nBlacklistCount, lpCompartment1[i])) {
+                if (lpCompartment1[i] == lpCompartment2[j] && !IsBlacklisted(lpCompartment1[i])) {
                     nSum += GetPriority(lpCompartment1[i]);
-                    Blacklist(szBlacklist, &nBlacklistCount, lpCompartment1[i]);
+                    Blacklist(lpCompartment1[i]);
                 }
+
+        ResetBlacklist();
     }
 
     printf("Sum: %i\n", nSum);
