@@ -54,5 +54,7 @@ int main() {
         ResetBlacklist();
     }
 
+    fclose(pFile);
+
     printf("Sum: %i\n", nSum);
 }

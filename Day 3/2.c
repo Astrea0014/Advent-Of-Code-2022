@@ -58,5 +58,7 @@ int main() {
         ResetCommon();
     }
 
+    fclose(pFile);
+
     printf("Sum: %i\n", nSum);
 }

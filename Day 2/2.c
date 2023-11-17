@@ -25,5 +25,7 @@ int main() {
         }
     }
 
+    fclose(pFile);
+
     printf("Score: %i\n", nSum);
 }

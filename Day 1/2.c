@@ -41,6 +41,8 @@ int main() {
     NULL
   );
 
+  CloseHandle(hFile);
+
   BOOL bNumberRead = FALSE;
   INT sznMaxTotal[3] = { 0, 0, 0 };
   INT nTotal = 0;

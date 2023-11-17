@@ -23,5 +23,7 @@ int main() {
             nCount++;
     }
 
+    fclose(pFile);
+
     printf("Count: %i\n", nCount);
 }
